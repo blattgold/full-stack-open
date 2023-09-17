@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personsService from './services/persons'
 
 const DisplayPerson = ({person}) => <>{person.name} {person.number}</>
 
-const DisplayPersons = ({ persons }) => {
+const DisplayPersons = ({ persons, deleteHandler }) => {
 	return (persons.map(person => 
 		<div key={person.id}>
 			<DisplayPerson person={person} />
+			<button onClick={() => deleteHandler(person.id)}>delete</button>
 		</div>
 	))
 }
@@ -51,23 +52,49 @@ const App = () => {
 	const [searchFilter, setSearchFilter] = useState('')
 
 	useEffect(() => {
-		axios
-			.get('http://localhost:3001/persons')
-			.then(response => {
-				setPersons(response.data)
+		personsService
+			.getAll()
+			.then(allPersons => {
+				setPersons(allPersons)
+		console.log(personsService.getAll())
 			})
 	}, [])
 
 	const addPerson = (event) => {
 		event.preventDefault()
-		const newPerson = {id: persons.length,name: newName, number: newNumber}
+		const newPerson = {name: newName, number: newNumber}
 
-		// add person if person with same name not yet already present
-		if (persons.every(person => person.name !== newPerson.name)) {
-			setPersons(persons.concat(newPerson))
-			setNewName('')
+		if (persons.every(person => person.name.toLowerCase() !== newPerson.name.toLowerCase())) {
+			// person not in phonebook
+			personsService
+				.create(newPerson)
+				.then(returnedPerson => {
+					setPersons(persons.concat(returnedPerson))
+				})
 		} else {
-			alert(`${newName} is already in the phonebook`)
+			// person already in phonebook, update number
+			if (confirm(`${newName} is already in the phonebook, replace old number with new one?`)) {
+				personsService
+					.update(persons.find(person => person.name.toLowerCase() == newPerson.name.toLowerCase()).id, newPerson)
+					.then(returnedPerson => setPersons(persons.map(person => person.id == returnedPerson.id ? returnedPerson : person)))
+					.catch(error => {
+						// if person was deleted on server but still visible on client, remove off of client
+						alert(`${newName} was deleted off the server`)
+						setPersons(persons.filter(person => newPerson.name !== person.name))
+					})
+			}
+		}
+	}
+
+	const handleDeletePerson = (id) => {
+		if (window.confirm(`Delete ${persons.find(person => id == person.id).name}?`)) {
+			personsService
+				.del(id)
+				.then(() => console.log(`successfully deleted person with id ${id}`))
+				.catch(error => {
+					alert(`person with id ${id} was already deleted from the server.`)
+				})
+			setPersons(persons.filter(person => id !== person.id))
 		}
 	}
 
@@ -83,7 +110,6 @@ const App = () => {
 		setSearchFilter(event.target.value)
 	}
 
-	// apply filter
 	const personsToShow = searchFilter === '' 
 		? persons
 		: persons.filter((person) => person.name.toLowerCase().includes(searchFilter.toLowerCase()))
@@ -100,7 +126,7 @@ const App = () => {
 				numberValue={newNumber}
 			/>
 			<h2>Numbers</h2>
-			<DisplayPersons persons={personsToShow} />
+			<DisplayPersons persons={personsToShow} deleteHandler={handleDeletePerson} />
 		</div>
 	)
 }
