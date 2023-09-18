@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import personsService from './services/persons'
 
+import './index.css'
+
 const DisplayPerson = ({person}) => <>{person.name} {person.number}</>
 
 const DisplayPersons = ({ persons, deleteHandler }) => {
@@ -35,6 +37,18 @@ const Input = ({name, onChange, value}) => {
 	)
 }
 
+const Notification = ({ message }) => {
+	if (message === null) {
+		return null
+	}
+
+	return (
+		<div className={message[1] === 0 ? 'notif' : 'error'}>
+			{message[0]}
+		</div>
+	)
+}
+
 const PersonForm = ({onSubmit, nameOnChange, nameValue, numberOnChange, numberValue}) => {
 	return (
 		<form onSubmit={onSubmit}>
@@ -50,6 +64,7 @@ const App = () => {
 	const [newName, setNewName] = useState('')
 	const [newNumber, setNewNumber] = useState('')
 	const [searchFilter, setSearchFilter] = useState('')
+	const [message, setMessage] = useState(null) // ['message', severity (0: notification, 1: error)] 
 
 	useEffect(() => {
 		personsService
@@ -70,29 +85,52 @@ const App = () => {
 				.create(newPerson)
 				.then(returnedPerson => {
 					setPersons(persons.concat(returnedPerson))
+					setMessage([`Added ${returnedPerson.name} to the Phonebook`, 0])
+					setTimeout(() => {
+						setMessage(null)
+					}, 5000)
 				})
 		} else {
 			// person already in phonebook, update number
 			if (confirm(`${newName} is already in the phonebook, replace old number with new one?`)) {
 				personsService
 					.update(persons.find(person => person.name.toLowerCase() == newPerson.name.toLowerCase()).id, newPerson)
-					.then(returnedPerson => setPersons(persons.map(person => person.id == returnedPerson.id ? returnedPerson : person)))
+					.then(returnedPerson => {
+						setPersons(persons.map(person => person.id == returnedPerson.id ? returnedPerson : person))
+						setMessage([`Replaced the number of ${returnedPerson.name}`, 0])
+						setTimeout(() => {
+							setMessage(null)
+						}, 5000)
+					})
 					.catch(error => {
 						// if person was deleted on server but still visible on client, remove off of client
-						alert(`${newName} was deleted off the server`)
 						setPersons(persons.filter(person => newPerson.name !== person.name))
+						setMessage([`${newName} was deleted off the server`, 1])
+						setTimeout(() => {
+							setMessage(null)
+						}, 5000)
 					})
 			}
 		}
 	}
 
 	const handleDeletePerson = (id) => {
-		if (window.confirm(`Delete ${persons.find(person => id == person.id).name}?`)) {
+		const personToDeleteName = persons.find(person => id == person.id).name
+
+		if (window.confirm(`Delete ${personToDeleteName}?`)) {
 			personsService
 				.del(id)
-				.then(() => console.log(`successfully deleted person with id ${id}`))
+				.then(() => {
+					setMessage([`deleted ${personToDeleteName} from Phonebook`])
+					setTimeout(() => {
+						setMessage(null)
+					}, 5000)
+				})
 				.catch(error => {
-					alert(`person with id ${id} was already deleted from the server.`)
+					setMessage([`${personToDeleteName} was already deleted from the server.`, 1])
+					setTimeout(() => {
+						setMessage(null)
+					}, 5000)
 				})
 			setPersons(persons.filter(person => id !== person.id))
 		}
@@ -117,6 +155,7 @@ const App = () => {
 	return (
 		<div>
 			<h2>Phonebook</h2>	
+			<Notification message={message} />
 			<SearchFilter onChange={handleSearchFilterChange} value={searchFilter} />
 			<PersonForm 
 				onSubmit={addPerson} 
