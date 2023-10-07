@@ -71,7 +71,6 @@ const App = () => {
 			.getAll()
 			.then(allPersons => {
 				setPersons(allPersons)
-		console.log(personsService.getAll())
 			})
 	}, [])
 
