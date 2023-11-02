@@ -109,12 +109,18 @@ const App = () => {
 						}, 5000)
 					})
 					.catch(error => {
-						// if person was deleted on server but still visible on client, remove off of client
-						setPersons(persons.filter(person => newPerson.name !== person.name))
-						setMessage([`${newName} was deleted off the server`, 1])
-						setTimeout(() => {
-							setMessage(null)
-						}, 5000)
+						if (error instanceof(TypeError)) {
+							setPersons(persons.filter(person => newName !== person.name))
+							setMessage([`${newName} was already deleted off the database`, 1])
+							setTimeout(() => {
+								setMessage(null)
+							}, 5000)
+						} else {
+							setMessage([error.response.data.error, 1])
+							setTimeout(() => {
+								setMessage(null)
+							}, 5000)
+						}
 					})
 			}
 		}
