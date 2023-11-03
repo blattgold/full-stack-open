@@ -4,6 +4,7 @@ const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
 const Blog = require('./models/blog')
+const logger = require('./utils/logger')
 
 mongoose.connect(process.env.MONGODB_URI)
 
@@ -29,5 +30,5 @@ app.post('/api/blogs', (request, response) => {
 })
 
 app.listen(process.env.PORT, () => {
-	console.log(`Server running on port ${process.env.PORT}`)
+	logger.info(`Server running on port ${process.env.PORT}`)
 })
