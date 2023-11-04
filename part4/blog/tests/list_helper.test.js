@@ -198,5 +198,64 @@ describe('find blog with highest likes', () => {
 				likes: 15,
 			})
 		})
+
 	})
 })
+
+describe('find author with most blogs', () => {
+	const listWithOneBlog = [
+		{
+			_id: '5a422aa71b54a676234d17f8',
+			title: 'Go To Statement Considered Harmful',
+			author: 'Edsger W. Dijkstra',
+			url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+			likes: 5,
+			__v: 0
+		}
+	]
+
+	const listWithThreeBlogs = [
+		{
+			_id: '5a422aa71b54a676234d17f8',
+			title: 'Go To Statement Considered Harmful',
+			author: 'Edsger W. Dijkstra',
+			url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+			likes: 5,
+			__v: 0
+		},
+		{
+			_id: '5a422a851b54a676234d17f7',
+			title: 'React Patterns',
+			author: 'Michael Chan',
+			url: 'https://reactpatterns.com/',
+			likes: 7,
+			__v: 0
+		},
+		{
+			_id: '5a422a851b54a676234d17f6',
+			title: 'Canonical string reduction',
+			author: 'Edsger W. Dijkstra',
+			url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+			likes: 12,
+			__v: 0
+		}
+	]
+
+	test('empty list should return null', () => {
+		const result = listHelper.mostBlogs([])
+		expect(result).toBe(null)
+	})
+
+	test('list with one element', () => {
+		const result = listHelper.mostBlogs(listWithOneBlog)
+		expect(result).toEqual({author: 'Edsger W. Dijkstra', blogs: 1})
+	})
+
+	test('list with three elements', () => {
+		const result = listHelper.mostBlogs(listWithThreeBlogs)
+		expect(result).toEqual({author: 'Edsger W. Dijkstra', blogs: 2})
+	})
+
+	listHelper.mostBlogs(listWithThreeBlogs)
+})
+

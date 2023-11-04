@@ -7,7 +7,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "jest --verbose",
-		"lint": "eslint ."
+    "lint": "eslint ."
   },
   "author": "Ashli",
   "license": "ISC",
@@ -20,6 +20,7 @@
   "devDependencies": {
     "eslint": "^8.52.0",
     "jest": "^29.7.0",
+    "lodash": "^4.17.21",
     "nodemon": "^3.0.1"
   },
   "jest": {
