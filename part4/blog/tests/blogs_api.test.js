@@ -41,11 +41,19 @@ beforeEach(async () => {
 })
 
 test('contains the right amount of blogs', async () => {
-	const blogs = await api
+	const response = await api
 		.get('/api/blogs')
 		.expect(200)
 		.expect('Content-Type', /application\/json/)
-	expect(blogs.body.length).toBe(3)
+	expect(response.body.length).toBe(3)
+})
+
+test('id property should be called id and not _id', async () => {
+	const response = await api
+		.get('/api/blogs')
+		.expect(200)
+		.expect('Content-Type', /application\/json/)
+	expect(response.body[0].id).toBeDefined()
 })
 
 afterAll(async () => {
