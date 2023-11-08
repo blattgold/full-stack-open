@@ -45,6 +45,7 @@ test('contains the right amount of blogs', async () => {
 		.get('/api/blogs')
 		.expect(200)
 		.expect('Content-Type', /application\/json/)
+
 	expect(response.body.length).toBe(3)
 })
 
@@ -53,7 +54,33 @@ test('id property should be called id and not _id', async () => {
 		.get('/api/blogs')
 		.expect(200)
 		.expect('Content-Type', /application\/json/)
+
 	expect(response.body[0].id).toBeDefined()
+})
+
+test('successfully adds a blog with POST request', async () => {
+	const newBlog = {
+		title: 'First class tests',
+		author: 'Robert C. Martin',
+		url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.html',
+		likes: 10
+	}
+
+	await api
+		.post('/api/blogs')
+		.send(newBlog)
+		.expect(201)
+		.expect('Content-Type', /application\/json/)
+
+	const blogs = await Blog.find({})
+	expect(blogs.length).toBe(4)
+
+	const blogsNoId = blogs
+		.map(blog => {
+			const { id, ...rest } = blog.toJSON()
+			return rest
+		})
+	expect(blogsNoId).toContainEqual(newBlog)
 })
 
 afterAll(async () => {
