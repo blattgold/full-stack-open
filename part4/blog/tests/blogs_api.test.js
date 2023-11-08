@@ -94,6 +94,40 @@ test('likes property of blog is 0 if none provided', async() => {
 	expect(blogs[0].likes).toBe(0)
 })
 
+describe('expect 400 Bad Request status code when missing...', () => {
+	test('...title', async () => {
+		await api
+			.post('/api/blogs')
+			.send({
+				author: 'Robert C. Martin',
+				url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.html',
+				likes: 10
+			})
+			.expect(400)
+	})
+
+	test('...url', async () => {
+		await api
+			.post('/api/blogs')
+			.send({
+				title: 'First class tests',
+				author: 'Robert C. Martin',
+				likes: 10
+			})
+			.expect(400)
+	})
+
+	test('...title and url', async () => {
+		await api
+			.post('/api/blogs')
+			.send({
+				author: 'Robert C. Martin',
+				likes: 10
+			})
+			.expect(400)
+	})
+})
+
 afterAll(async () => {
 	await mongoose.connection.close()
 })
