@@ -72,15 +72,26 @@ test('successfully adds a blog with POST request', async () => {
 		.expect(201)
 		.expect('Content-Type', /application\/json/)
 
-	const blogs = await Blog.find({})
-	expect(blogs.length).toBe(4)
+	const blogs = await Blog.find(newBlog)
+	expect(blogs.length).toBe(1)
+})
 
-	const blogsNoId = blogs
-		.map(blog => {
-			const { id, ...rest } = blog.toJSON()
-			return rest
-		})
-	expect(blogsNoId).toContainEqual(newBlog)
+test('likes property of blog is 0 if none provided', async() => {
+	const newBlog = {
+		title: 'First class tests',
+		author: 'Robert C. Martin',
+		url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.html'
+	}
+
+	await api
+		.post('/api/blogs')
+		.send(newBlog)
+		.expect(201)
+		.expect('Content-Type', /application\/json/)
+
+	const blogs = await Blog.find(newBlog)
+	expect(blogs.length).toBe(1)
+	expect(blogs[0].likes).toBe(0)
 })
 
 afterAll(async () => {
