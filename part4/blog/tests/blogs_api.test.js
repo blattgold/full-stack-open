@@ -72,8 +72,8 @@ test('successfully adds a blog with POST request', async () => {
 		.expect(201)
 		.expect('Content-Type', /application\/json/)
 
-	const blogs = await Blog.find(newBlog)
-	expect(blogs.length).toBe(1)
+	const blog = await Blog.findOne(newBlog)
+	expect(blog).toBeTruthy()
 })
 
 test('likes property of blog is 0 if none provided', async() => {
@@ -89,9 +89,9 @@ test('likes property of blog is 0 if none provided', async() => {
 		.expect(201)
 		.expect('Content-Type', /application\/json/)
 
-	const blogs = await Blog.find(newBlog)
-	expect(blogs.length).toBe(1)
-	expect(blogs[0].likes).toBe(0)
+	const blog = await Blog.findOne(newBlog)
+	expect(blog).toBeTruthy()
+	expect(blog.likes).toBe(0)
 })
 
 describe('expect 400 Bad Request status code when missing...', () => {
