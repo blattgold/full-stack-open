@@ -128,6 +128,28 @@ describe('expect 400 Bad Request status code when missing...', () => {
 	})
 })
 
+test('sending malformatted id gives 400 Bad Request', async () => {
+	await api
+		.delete('/api/blogs/1')
+		.expect(400)
+})
+
+test('deleting a resource', async () => {
+	const toDeleteBlog = await Blog.findOne({title: 'React Patterns'})
+	const toDeleteId = toDeleteBlog.toJSON().id
+
+	await api
+		.delete(`/api/blogs/${toDeleteId}`)
+		.expect(204)
+
+	const afterDeleteBlogs = await Blog.find({})
+	expect(afterDeleteBlogs.length).toBe(2)
+
+	const afterDeleteBlogsTitles = afterDeleteBlogs.map(blog => blog.title)
+	expect(afterDeleteBlogsTitles).toContain('Go To Statement Considered Harmful')
+	expect(afterDeleteBlogsTitles).toContain('Canonical string reduction')
+})
+
 afterAll(async () => {
 	await mongoose.connection.close()
 })
