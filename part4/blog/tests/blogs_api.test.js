@@ -128,26 +128,85 @@ describe('expect 400 Bad Request status code when missing...', () => {
 	})
 })
 
-test('sending malformatted id gives 400 Bad Request', async () => {
-	await api
-		.delete('/api/blogs/1')
-		.expect(400)
+describe('DELETE /api/blogs/:id', () => {
+	test('sending malformatted id gives 400 Bad Request', async () => {
+		await api
+			.delete('/api/blogs/1')
+			.expect(400)
+	})
+
+	test('sending valid but not present id gives 204 No Content', async () => {
+		const toDeleteId = new mongoose.Types.ObjectId()
+
+		await api
+			.delete(`/api/blogs/${toDeleteId}`)
+			.expect(204)
+	})
+
+	test('deleting a resource', async () => {
+		const toDeleteBlog = await Blog.findOne({title: 'React Patterns'})
+		const toDeleteId = toDeleteBlog.toJSON().id
+
+		await api
+			.delete(`/api/blogs/${toDeleteId}`)
+			.expect(204)
+
+		const afterDeleteBlogs = await Blog.find({})
+		expect(afterDeleteBlogs.length).toBe(2)
+
+		const afterDeleteBlogsTitles = afterDeleteBlogs.map(blog => blog.title)
+		expect(afterDeleteBlogsTitles).toContain('Go To Statement Considered Harmful')
+		expect(afterDeleteBlogsTitles).toContain('Canonical string reduction')
+	})
 })
 
-test('deleting a resource', async () => {
-	const toDeleteBlog = await Blog.findOne({title: 'React Patterns'})
-	const toDeleteId = toDeleteBlog.toJSON().id
+describe('PUT /api/blogs/:id', () => {
+	test('sending malformatted id gives 400 Bad Request', async () => {
+		await api
+			.put('/api/blogs/1')
+			.send({likes: 0})
+			.expect(400)
+	})
 
-	await api
-		.delete(`/api/blogs/${toDeleteId}`)
-		.expect(204)
+	test('sending valid but not present id gives 404 Not Found', async () => {
+		const toDeleteId = new mongoose.Types.ObjectId()
 
-	const afterDeleteBlogs = await Blog.find({})
-	expect(afterDeleteBlogs.length).toBe(2)
+		await api
+			.put(`/api/blogs/${toDeleteId}`)
+			.send({likes: 1})
+			.expect(404)
+	})
 
-	const afterDeleteBlogsTitles = afterDeleteBlogs.map(blog => blog.title)
-	expect(afterDeleteBlogsTitles).toContain('Go To Statement Considered Harmful')
-	expect(afterDeleteBlogsTitles).toContain('Canonical string reduction')
+	test('updating only likes of an element', async () => {
+		const toUpdateBlog = (await Blog.findOne({title: 'React Patterns'})).toJSON()
+
+		await api
+			.put(`/api/blogs/${toUpdateBlog.id}`)
+			.send({likes: 200})
+			.expect(200)
+
+		const updatedBlog = (await Blog.findOne({title: 'React Patterns'})).toJSON()
+		expect(updatedBlog).toEqual({...toUpdateBlog, likes: 200})
+	})
+
+	test('updating all properties of an element', async () => {
+		const toUpdateBlog = (await Blog.findOne({title: 'React Patterns'})).toJSON()
+
+		const newBlogProps = {
+			title: 'title',
+			author: 'author',
+			url: 'url',
+			likes: 100
+		}
+
+		await api
+			.put(`/api/blogs/${toUpdateBlog.id}`)
+			.send(newBlogProps)
+			.expect(200)
+
+		const updatedBlog = (await Blog.findOne(newBlogProps)).toJSON()
+		expect(updatedBlog).toEqual({...toUpdateBlog, title: 'title', author: 'author', url: 'url', likes: 100})
+	})
 })
 
 afterAll(async () => {
