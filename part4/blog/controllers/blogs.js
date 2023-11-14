@@ -4,26 +4,18 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
-	const blogs = await Blog.find({}).populate('user', { 
+	const blogs = await Blog.find({}).populate('user', {
 		username: 1,
 		name: 1
 	})
 	response.json(blogs)
 })
 
-const getTokenFrom = request => {
-	const authorization = request.get('authorization')
-	if (authorization && authorization.startsWith('bearer '))
-		return authorization.replace('bearer ', '')
-	else 
-		return null
-}
-
 blogsRouter.post('/', async (request, response, next) => {
 	const blog = new Blog(request.body)
 	let decodedToken = null
 	try {
-		decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+		decodedToken = jwt.verify(request.token, process.env.SECRET)
 	} catch(e) {
 		return next(e)
 	}
@@ -58,7 +50,7 @@ blogsRouter.delete('/:id', async (request, response, next) => {
 blogsRouter.put('/:id', async (request, response, next) => {
 	const body = request.body
 	const blog = {}
-	
+
 	if (body.title) blog.title = body.title
 	if (body.author) blog.author = body.author
 	if (body.url) blog.url = body.url
