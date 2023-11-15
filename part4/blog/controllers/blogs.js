@@ -14,6 +14,9 @@ blogsRouter.post('/', async (request, response, next) => {
 	const blog = new Blog(request.body)
 	
 	const user = request.user
+	if (!user)
+		return response.status(401).json({ error: 'no token provided'})
+
 	blog.user = user._id
 
 	if (!blog.title || !blog.url) 
@@ -32,6 +35,8 @@ blogsRouter.post('/', async (request, response, next) => {
 blogsRouter.delete('/:id', async (request, response, next) => {
 	const id = request.params.id
 	const user = request.user
+	if (!user)
+		return response.status(401).json({ error: 'no token provided'})
 	
 	const blogToDelete = await Blog.findById(id)
 	if (!blogToDelete)
