@@ -19,9 +19,9 @@ const favoriteBlog = blogs => {
 	} else {
 		return blogs.reduce(
 			(acc, blog) => blog.likes > acc.likes
-				? {title: blog.title, author: blog.author, likes: blog.likes}
+				? { title: blog.title, author: blog.author, likes: blog.likes }
 				: acc,
-			{likes: -1}
+			{ likes: -1 }
 		)
 	}
 }
@@ -37,9 +37,9 @@ const mostBlogs = blogs => {
 		)
 		return Object.keys(counts).reduce(
 			(acc, key) => counts[key] > acc.blogs
-				? {author: key, blogs: counts[key]}
+				? { author: key, blogs: counts[key] }
 				: acc,
-			{author: '', blogs: -1}
+			{ author: '', blogs: -1 }
 		)
 	}
 }
@@ -59,10 +59,10 @@ const mostLikes = blogs => {
 			{}
 		)
 		return Object.keys(allLikes).reduce(
-			(acc, author) => allLikes[author] > acc.likes 
-				? {author: author, likes: allLikes[author]}
+			(acc, author) => allLikes[author] > acc.likes
+				? { author: author, likes: allLikes[author] }
 				: acc,
-			{author: '', likes: -1}
+			{ author: '', likes: -1 }
 		)
 	}
 }

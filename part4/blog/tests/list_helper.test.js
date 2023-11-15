@@ -170,7 +170,7 @@ describe('find blog with highest likes', () => {
 			}
 		)
 	})
-	
+
 	describe('3 element list where...', () => {
 		test('...first element has the highest amount of likes', () => {
 			const result = listHelper.favoriteBlog(listWithThreeBlogsFirstHigh)
@@ -248,12 +248,12 @@ describe('find author with most blogs', () => {
 
 	test('list with one element', () => {
 		const result = listHelper.mostBlogs(listWithOneBlog)
-		expect(result).toEqual({author: 'Edsger W. Dijkstra', blogs: 1})
+		expect(result).toEqual({ author: 'Edsger W. Dijkstra', blogs: 1 })
 	})
 
 	test('list with three elements', () => {
 		const result = listHelper.mostBlogs(listWithThreeBlogs)
-		expect(result).toEqual({author: 'Edsger W. Dijkstra', blogs: 2})
+		expect(result).toEqual({ author: 'Edsger W. Dijkstra', blogs: 2 })
 	})
 })
 
@@ -331,16 +331,16 @@ describe('find author with most likes and return amount of likes', () => {
 
 	test('list with one element', () => {
 		const result = listHelper.mostLikes(listWithOneBlog)
-		expect(result).toEqual({author: 'Edsger W. Dijkstra', likes: 5})
+		expect(result).toEqual({ author: 'Edsger W. Dijkstra', likes: 5 })
 	})
 
 	test('list with three elements, 2 blogs add up to highest', () => {
 		const result = listHelper.mostLikes(listWithThreeBlogsTwoHighest)
-		expect(result).toEqual({author: 'Edsger W. Dijkstra', likes: 11})
+		expect(result).toEqual({ author: 'Edsger W. Dijkstra', likes: 11 })
 	})
 
 	test('list with three elements, 1 blog is highest', () => {
 		const result = listHelper.mostLikes(listWithThreeBlogsOneHighest)
-		expect(result).toEqual({author: 'Michael Chan', likes: 12})
+		expect(result).toEqual({ author: 'Michael Chan', likes: 12 })
 	})
 })

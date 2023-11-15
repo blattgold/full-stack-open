@@ -56,9 +56,9 @@ const userTokens = {
 	user: 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJpZCI6IjY1NTUzMjcyMDk3MDY2OWFiZjdjN2IzYyIsImlhdCI6MTcwMDA4MjgyNH0.r8VI3pL5U4R3OVtjvP-ZuNqkAJ1i-dmSA2XecZTVzZE'
 }
 
-beforeAll(async () => {	
+beforeAll(async () => {
 	await User.deleteMany({})
-	
+
 	for (let user of listWithTwoUsers) {
 		let userObject = new User(user)
 		await userObject.save()
@@ -217,7 +217,7 @@ describe('DELETE /api/blogs/:id', () => {
 	})
 
 	test('deleting a resource', async () => {
-		const toDeleteBlog = await Blog.findOne({title: 'React Patterns'})
+		const toDeleteBlog = await Blog.findOne({ title: 'React Patterns' })
 		const toDeleteId = toDeleteBlog.toJSON().id
 
 		await api
@@ -237,7 +237,7 @@ describe('PUT /api/blogs/:id', () => {
 	test('sending malformatted id gives 400 Bad Request', async () => {
 		await api
 			.put('/api/blogs/1')
-			.send({likes: 0})
+			.send({ likes: 0 })
 			.expect(400)
 	})
 
@@ -246,24 +246,24 @@ describe('PUT /api/blogs/:id', () => {
 
 		await api
 			.put(`/api/blogs/${toDeleteId}`)
-			.send({likes: 1})
+			.send({ likes: 1 })
 			.expect(404)
 	})
 
 	test('updating only likes of an element', async () => {
-		const toUpdateBlog = (await Blog.findOne({title: 'React Patterns'})).toJSON()
+		const toUpdateBlog = (await Blog.findOne({ title: 'React Patterns' })).toJSON()
 
 		await api
 			.put(`/api/blogs/${toUpdateBlog.id}`)
-			.send({likes: 200})
+			.send({ likes: 200 })
 			.expect(200)
 
-		const updatedBlog = (await Blog.findOne({title: 'React Patterns'})).toJSON()
-		expect(updatedBlog).toEqual({...toUpdateBlog, likes: 200})
+		const updatedBlog = (await Blog.findOne({ title: 'React Patterns' })).toJSON()
+		expect(updatedBlog).toEqual({ ...toUpdateBlog, likes: 200 })
 	})
 
 	test('updating all properties of an element', async () => {
-		const toUpdateBlog = (await Blog.findOne({title: 'React Patterns'})).toJSON()
+		const toUpdateBlog = (await Blog.findOne({ title: 'React Patterns' })).toJSON()
 
 		const newBlogProps = {
 			title: 'title',
@@ -278,7 +278,7 @@ describe('PUT /api/blogs/:id', () => {
 			.expect(200)
 
 		const updatedBlog = (await Blog.findOne(newBlogProps)).toJSON()
-		expect(updatedBlog).toEqual({...toUpdateBlog, title: 'title', author: 'author', url: 'url', likes: 100})
+		expect(updatedBlog).toEqual({ ...toUpdateBlog, title: 'title', author: 'author', url: 'url', likes: 100 })
 	})
 })
 

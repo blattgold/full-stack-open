@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken')
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 
@@ -10,18 +9,18 @@ blogsRouter.get('/', async (request, response) => {
 	response.json(blogs)
 })
 
-blogsRouter.post('/', async (request, response, next) => {
+blogsRouter.post('/', async (request, response) => {
 	const blog = new Blog(request.body)
-	
+
 	const user = request.user
 	if (!user)
-		return response.status(401).json({ error: 'no token provided'})
+		return response.status(401).json({ error: 'no token provided' })
 
 	blog.user = user._id
 
-	if (!blog.title || !blog.url) 
+	if (!blog.title || !blog.url)
 		return response.status(400).json({ error: 'title and / or url missing' })
-	if (!blog.likes) 
+	if (!blog.likes)
 		blog.likes = 0
 
 	const result = await blog.save()
@@ -32,18 +31,18 @@ blogsRouter.post('/', async (request, response, next) => {
 	response.status(201).json(result)
 })
 
-blogsRouter.delete('/:id', async (request, response, next) => {
+blogsRouter.delete('/:id', async (request, response) => {
 	const id = request.params.id
 	const user = request.user
 	if (!user)
-		return response.status(401).json({ error: 'no token provided'})
-	
+		return response.status(401).json({ error: 'no token provided' })
+
 	const blogToDelete = await Blog.findById(id)
 	if (!blogToDelete)
-		return response.status(404).json({error: 'no blog with given id'})
+		return response.status(404).json({ error: 'no blog with given id' })
 
 	if (user.id.toString() !== blogToDelete.user.toString())
-		return response.status(401).json({error: 'you can only delete a blog which you created'})
+		return response.status(401).json({ error: 'you can only delete a blog which you created' })
 
 	await Blog.findByIdAndDelete(id)
 	response.status(204).end()

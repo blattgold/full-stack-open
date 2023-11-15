@@ -1,4 +1,3 @@
-const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
@@ -108,6 +107,6 @@ describe('POST /api/users', () => {
 			.expect(400)
 			.expect('Content-Type', /application\/json/)
 
-		expect(response.body).toEqual({ error: 'E11000 duplicate key error collection: test_blogs_app.users index: username_1 dup key: { username: \"admin\" }' })
+		expect(response.body).toEqual({ error: 'E11000 duplicate key error collection: test_blogs_app.users index: username_1 dup key: { username: "admin" }' })
 	})
 })
