@@ -3,6 +3,7 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const listWithThreeBlogs = [
 	{
@@ -30,6 +31,39 @@ const listWithThreeBlogs = [
 		__v: 0
 	}
 ]
+
+const listWithTwoUsers = [
+	{
+		_id: '655532630970669abf7c7b3a',
+		username: 'root',
+		name: '',
+		passwordHash: '$2b$10$0Mx5qdwmtYJyAQ77UXQH6uNhPatma2jWUS2EwRKS5OZ0gj0N/aLXW', //root
+		blogs: [],
+		__v: 0
+	},
+	{
+		_id: '655532720970669abf7c7b3c',
+		username: 'user',
+		name: '',
+		passwordHash: '$2b$10$BoWzoH4ViGXf9jg1QhqVvegrCj1tZtChU8c0qbv4E2bh0G06iPm4e', //user
+		blogs: [],
+		__v: 0
+	}
+]
+
+const userTokens = {
+	root: 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY1NTUzMjYzMDk3MDY2OWFiZjdjN2IzYSIsImlhdCI6MTcwMDA4Mjg5NX0.dfvX-NUjAuJY12VQE9ff3Ip77GiDsIA2ALzGU4Rybn8',
+	user: 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJpZCI6IjY1NTUzMjcyMDk3MDY2OWFiZjdjN2IzYyIsImlhdCI6MTcwMDA4MjgyNH0.r8VI3pL5U4R3OVtjvP-ZuNqkAJ1i-dmSA2XecZTVzZE'
+}
+
+beforeAll(async () => {	
+	await User.deleteMany({})
+	
+	for (let user of listWithTwoUsers) {
+		let userObject = new User(user)
+		await userObject.save()
+	}
+})
 
 beforeEach(async () => {
 	await Blog.deleteMany({})
@@ -70,6 +104,7 @@ describe('POST /api/blogs', () => {
 		await api
 			.post('/api/blogs')
 			.send(newBlog)
+			.set({ Authorization: userTokens.root })
 			.expect(201)
 			.expect('Content-Type', /application\/json/)
 
@@ -87,6 +122,7 @@ describe('POST /api/blogs', () => {
 		await api
 			.post('/api/blogs')
 			.send(newBlog)
+			.set({ Authorization: userTokens.user })
 			.expect(201)
 			.expect('Content-Type', /application\/json/)
 
@@ -104,6 +140,7 @@ describe('POST /api/blogs', () => {
 					url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.html',
 					likes: 10
 				})
+				.set({ Authorization: userTokens.root })
 				.expect(400)
 		})
 
@@ -115,6 +152,7 @@ describe('POST /api/blogs', () => {
 					author: 'Robert C. Martin',
 					likes: 10
 				})
+				.set({ Authorization: userTokens.root })
 				.expect(400)
 		})
 
@@ -125,7 +163,40 @@ describe('POST /api/blogs', () => {
 					author: 'Robert C. Martin',
 					likes: 10
 				})
+				.set({ Authorization: userTokens.root })
 				.expect(400)
+		})
+	})
+	describe('401 unauthorized when...', () => {
+		test('...no authorization header', async () => {
+			const newBlog = {
+				title: 'First class tests',
+				author: 'Robert C. Martin',
+				url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.html',
+				likes: 10
+			}
+
+			await api
+				.post('/api/blogs')
+				.send(newBlog)
+				.expect(401)
+				.expect('Content-Type', /application\/json/)
+		})
+
+		test('...invalid authorization header', async () => {
+			const newBlog = {
+				title: 'First class tests',
+				author: 'Robert C. Martin',
+				url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.html',
+				likes: 10
+			}
+
+			await api
+				.post('/api/blogs')
+				.send(newBlog)
+				.set({ Authorization: 'bearer aaeevvvvv' })
+				.expect(401)
+				.expect('Content-Type', /application\/json/)
 		})
 	})
 })
