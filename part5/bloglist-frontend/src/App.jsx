@@ -3,14 +3,21 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+import './index.css'
+
 const App = () => {
 	const [blogs, setBlogs] = useState([])
+
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const [user, setUser] = useState(null)
+
 	const [title, setTitle] = useState('')
 	const [author, setAuthor] = useState('')
 	const [url, setUrl] = useState('')
+
+	const [notifError, setNotifError] = useState(null)
+	const [notifSuccess, setNotifSuccess] = useState(null)
 
 	useEffect(() => {
 		blogService.getAll().then(blogs =>
@@ -27,6 +34,23 @@ const App = () => {
 		}
 	}, [])
 
+	const displayNotification = (type, message) => {
+		const timeout = 4000
+		if (type === 'success') {
+			setNotifSuccess(message)
+			setTimeout(() => {
+				setNotifSuccess(null)
+			}, timeout)
+		} else if (type === 'error') {
+			setNotifError(message)
+			setTimeout(() => {
+				setNotifError(null)
+			}, timeout)
+		} else {
+			console.error(`invalid notification type ${type}`)
+		}
+	}
+
 	const handleLogin = async (event) => {
 		event.preventDefault()
 
@@ -42,15 +66,20 @@ const App = () => {
 			setUser(user)
 			setUsername('')
 			setPassword('')
+			displayNotification('success', `logged in as ${user.username}`)
 		} catch (e) {
 			console.error(e)
+			displayNotification('error', e.response.data.error)
 		}
 	}
 
 	const handleLogout = (event) => {
+		event.preventDefault()
+
 		blogService.setToken(null)
 		window.localStorage.removeItem('loggedBlogappUser')
 		setUser(null)
+		displayNotification('success', 'logged out')
 	}
 
 	const handleCreateBlog = async (event) => {
@@ -63,15 +92,23 @@ const App = () => {
 				url: url
 			}
 
-			await blogService.create(newBlog)
+			const createdBlog = await blogService.create(newBlog)
+			setBlogs(blogs.concat(createdBlog))
+			displayNotification('success', `a new blog ${newBlog.title} by ${newBlog.author} added`)
 		} catch (e) {
 			console.error(e)
+			displayNotification('error', e.response.data.error)
 		}
 	}
 
+	const notification = () => (
+		<div className={notifError ? 'notifError' : 'notifSuccess'}>
+			{notifError || notifSuccess}
+		</div>
+	)
+
 	const loginForm = () => (
 		<>
-			<h2>log in to application</h2>
 			<form onSubmit={handleLogin}>
 				<div>
 					username
@@ -98,7 +135,6 @@ const App = () => {
 
 	const blogList = () => (
 		<>
-			<h2>blogs</h2>
 			<div>
 				{user.username} logged in
 				<button onClick={handleLogout}>logout</button>
@@ -148,6 +184,10 @@ const App = () => {
 
 	return (
 		<div>
+			<h2>{!user ? 'log in to application' : 'blogs'}</h2>
+			{notifError || notifSuccess
+				? notification()
+				: <></>}
 			{!user
 				? loginForm()
 				: blogList()
