@@ -8,6 +8,9 @@ const App = () => {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const [user, setUser] = useState(null)
+	const [title, setTitle] = useState('')
+	const [author, setAuthor] = useState('')
+	const [url, setUrl] = useState('')
 
 	useEffect(() => {
 		blogService.getAll().then(blogs =>
@@ -20,6 +23,7 @@ const App = () => {
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON)
 			setUser(user)
+			blogService.setToken(user.token)
 		}
 	}, [])
 
@@ -34,6 +38,7 @@ const App = () => {
 			window.localStorage.setItem(
 				'loggedBlogappUser', JSON.stringify(user)
 			)
+			blogService.setToken(user.token)
 			setUser(user)
 			setUsername('')
 			setPassword('')
@@ -43,8 +48,25 @@ const App = () => {
 	}
 
 	const handleLogout = (event) => {
+		blogService.setToken(null)
 		window.localStorage.removeItem('loggedBlogappUser')
 		setUser(null)
+	}
+
+	const handleCreateBlog = async (event) => {
+		event.preventDefault()
+
+		try {
+			const newBlog = {
+				title: title,
+				author: author,
+				url: url
+			}
+
+			await blogService.create(newBlog)
+		} catch (e) {
+			console.error(e)
+		}
 	}
 
 	const loginForm = () => (
@@ -80,6 +102,40 @@ const App = () => {
 			<div>
 				{user.username} logged in
 				<button onClick={handleLogout}>logout</button>
+			</div>
+			<br/>
+			<div>
+				<h2>create new</h2>
+				<form onSubmit={handleCreateBlog}>
+					<div>
+						title:
+						<input
+							type='text'
+							value={title}
+							name='Title'
+							onChange={({ target }) => setTitle(target.value)}
+						/>
+					</div>
+					<div>
+						author:
+						<input
+							type='text'
+							value={author}
+							name='Author'
+							onChange={({ target }) => setAuthor(target.value)}
+						/>
+					</div>
+					<div>
+						url:
+						<input
+							type='text'
+							value={url}
+							name='Url'
+							onChange={({ target }) => setUrl(target.value)}
+						/>
+					</div>
+					<button type='submit'>create</button>
+				</form>
 			</div>
 			<br/>
 			<div>
