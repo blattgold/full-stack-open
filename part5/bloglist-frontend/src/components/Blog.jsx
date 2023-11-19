@@ -16,6 +16,15 @@ const Blog = ({ blog, blogs, setBlogs }) => {
 		}	
 		let savedBlogs = [...blogs]
 		savedBlogs.find(blogSaved => blogSaved.id === blog.id).likes += 1
+		savedBlogs.sort((a, b) => {
+			if (a.likes > b.likes) {
+				return -1
+			} else if (b.likes > a.likes) {
+				return 1
+			} else {
+				return 0
+			}
+		})
 		setBlogs(savedBlogs)
 
 		blogService.update(blog.id, updatedBlog)
