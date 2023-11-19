@@ -1,7 +1,25 @@
 import { useState } from 'react'
+import blogService from '../services/blogs'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, blogs, setBlogs }) => {
 	const [visible, setVisible] = useState(false)
+
+	const handleLikeButton = (event) => {
+		event.preventDefault()
+
+		const updatedBlog = {
+			user: blog.user.id,
+			likes: blog.likes + 1,
+			author: blog.author,
+			title: blog.title,
+			url: blog.url
+		}	
+		let savedBlogs = [...blogs]
+		savedBlogs.find(blogSaved => blogSaved.id === blog.id).likes += 1
+		setBlogs(savedBlogs)
+
+		blogService.update(blog.id, updatedBlog)
+	}
 
 	const blogStyle = {
 		paddingTop: 10,
@@ -27,7 +45,7 @@ const Blog = ({ blog }) => {
 				</div>
 				<div>
 					likes {blog.likes}
-					<button>like</button>
+					<button onClick={handleLikeButton}>like</button>
 				</div>
 				<div>{blog.user.username}</div>
 			</div>

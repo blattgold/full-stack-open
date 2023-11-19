@@ -158,7 +158,10 @@ const App = () => {
 								url={url}
 							/>
 						</Togglable>
-						<BlogList blogs={blogs} />
+						<BlogList 
+							blogs={blogs} 
+							setBlogs={setBlogs}
+						/>
 					</>
 				)
 			}
