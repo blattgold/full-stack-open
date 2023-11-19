@@ -28,7 +28,10 @@ blogsRouter.post('/', async (request, response) => {
 	user.blogs.push(result._id)
 	await user.save()
 
-	response.status(201).json(result)
+	response.status(201).json(await result.populate('user', {
+		username: 1,
+		name: 1
+	}))
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
