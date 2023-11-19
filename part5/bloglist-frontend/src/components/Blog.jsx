@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, blogs, setBlogs }) => {
+const Blog = ({ blog, blogs, setBlogs, username }) => {
 	const [visible, setVisible] = useState(false)
 
 	const handleLikeButton = (event) => {
@@ -28,6 +28,15 @@ const Blog = ({ blog, blogs, setBlogs }) => {
 		setBlogs(savedBlogs)
 
 		blogService.update(blog.id, updatedBlog)
+	}
+
+	const handleRemoveButton = (event) => {
+		event.preventDefault()
+
+		if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)){
+			setBlogs(blogs.filter(savedBlog => savedBlog.id !== blog.id))
+			blogService.remove(blog.id)
+		}
 	}
 
 	const blogStyle = {
@@ -57,6 +66,9 @@ const Blog = ({ blog, blogs, setBlogs }) => {
 					<button onClick={handleLikeButton}>like</button>
 				</div>
 				<div>{blog.user.username}</div>
+				<div style={{display: username === blog.user.username ? '' : 'none'}}>
+					<button onClick={handleRemoveButton}>remove</button>
+				</div>
 			</div>
 		</div>
 	)

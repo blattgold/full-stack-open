@@ -2,7 +2,8 @@ import Blog from './Blog'
 
 const BlogList = ({ 
 	blogs,
-	setBlogs
+	setBlogs,
+	username
 }) => {
 	return (
 		<div>
@@ -12,6 +13,7 @@ const BlogList = ({
 					blog={blog} 
 					blogs={blogs}
 					setBlogs={setBlogs}
+					username={username}
 				/>
 			)}
 		</div>

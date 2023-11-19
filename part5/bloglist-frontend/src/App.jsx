@@ -169,6 +169,7 @@ const App = () => {
 						<BlogList 
 							blogs={blogs} 
 							setBlogs={setBlogs}
+							username={user ? user.username : null}
 						/>
 					</>
 				)
