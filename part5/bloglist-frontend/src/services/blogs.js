@@ -25,7 +25,7 @@ const update = async (id, updatedBlog) => {
 
 	const request = await axios.put(baseUrl + '/' + id, updatedBlog)
 	return request.data
-, config}
+}
 
 const remove = async id => {
 	const config = {
@@ -36,7 +36,7 @@ const remove = async id => {
 	return request.data
 }
 
-export default { 
+export default {
 	getAll,
 	create,
 	update,

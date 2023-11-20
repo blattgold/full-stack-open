@@ -141,22 +141,22 @@ const App = () => {
 				? notification()
 				: <></>
 			}
-			{!user 
-				? <LoginForm 
-						handleLogin={handleLogin}
-						handleUsernameChange={handleUsernameChange}
-						handlePasswordChange={handlePasswordChange}
-						username={username}
-						password={password}
-					/>
+			{!user
+				? <LoginForm
+					handleLogin={handleLogin}
+					handleUsernameChange={handleUsernameChange}
+					handlePasswordChange={handlePasswordChange}
+					username={username}
+					password={password}
+				/>
 				: (
 					<>
-						<LogoutButton 
+						<LogoutButton
 							handleLogout={handleLogout}
 							username={user.username}
 						/>
 						<Togglable buttonLabel='create new blog' ref={newBlogFormRef}>
-							<NewBlogForm 
+							<NewBlogForm
 								handleCreateBlog={handleCreateBlog}
 								handleTitleChange={handleTitleChange}
 								handleAuthorChange={handleAuthorChange}
@@ -166,8 +166,8 @@ const App = () => {
 								url={url}
 							/>
 						</Togglable>
-						<BlogList 
-							blogs={blogs} 
+						<BlogList
+							blogs={blogs}
 							setBlogs={setBlogs}
 							username={user ? user.username : null}
 						/>

@@ -13,7 +13,7 @@ const Blog = ({ blog, blogs, setBlogs, username }) => {
 			author: blog.author,
 			title: blog.title,
 			url: blog.url
-		}	
+		}
 		let savedBlogs = [...blogs]
 		savedBlogs.find(blogSaved => blogSaved.id === blog.id).likes += 1
 		savedBlogs.sort((a, b) => {
@@ -55,7 +55,7 @@ const Blog = ({ blog, blogs, setBlogs, username }) => {
 					{visible ? 'hide' : 'view'}
 				</button>
 			</div>
-			<div style={{display: visible ? '' : 'none'}}>
+			<div style={{ display: visible ? '' : 'none' }}>
 				<div>
 					<a href={blog.url}>
 						{blog.url}
@@ -66,7 +66,7 @@ const Blog = ({ blog, blogs, setBlogs, username }) => {
 					<button onClick={handleLikeButton}>like</button>
 				</div>
 				<div>{blog.user.username}</div>
-				<div style={{display: username === blog.user.username ? '' : 'none'}}>
+				<div style={{ display: username === blog.user.username ? '' : 'none' }}>
 					<button onClick={handleRemoveButton}>remove</button>
 				</div>
 			</div>

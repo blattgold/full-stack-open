@@ -1,4 +1,4 @@
-const LogoutButton = ({ 
+const LogoutButton = ({
 	handleLogout,
 	username
 }) => (
