@@ -49,13 +49,13 @@ const Blog = ({ blog, blogs, setBlogs, username }) => {
 
 	return (
 		<div style={blogStyle}>
-			<div>
+			<div className='titleAndAuthor'>
 				{blog.title} {blog.author}
 				<button onClick={() => setVisible(!visible)}>
 					{visible ? 'hide' : 'view'}
 				</button>
 			</div>
-			<div style={{ display: visible ? '' : 'none' }}>
+			<div className='urlAndLikes' style={{ display: visible ? '' : 'none' }}>
 				<div>
 					<a href={blog.url}>
 						{blog.url}
