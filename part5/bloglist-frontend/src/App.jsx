@@ -134,6 +134,32 @@ const App = () => {
 	const handleAuthorChange = ({ target }) => setAuthor(target.value)
 	const handleUrlChange = ({ target }) => setUrl(target.value)
 
+	const makeHandleLikeButton = blog => event => {
+		// for Blog component
+		// takes current blog and returns handler function
+		event.preventDefault
+
+		const updatedBlog = {
+			user: blog.user.id,
+			likes: blog.likes + 1,
+			author: blog.author,
+			title: blog.title,
+			url: blog.url
+		}
+		let savedBlogs = [...blogs]
+		savedBlogs.find(blogSaved => blogSaved.id === blog.id).likes += 1
+		savedBlogs.sort((a, b) => {
+			if (a.likes > b.likes) {
+				return -1
+			} else if (b.likes > a.likes) {
+				return 1
+			} else {
+				return 0
+			}
+		})
+		setBlogs(savedBlogs)
+	}
+
 	return (
 		<div>
 			<h2>{!user ? 'log in to application' : 'blogs'}</h2>
@@ -168,8 +194,8 @@ const App = () => {
 						</Togglable>
 						<BlogList
 							blogs={blogs}
-							setBlogs={setBlogs}
-							username={user ? user.username : null}
+							makeHandleLikeButton={makeHandleLikeButton}
+							username={user.username}
 						/>
 					</>
 				)

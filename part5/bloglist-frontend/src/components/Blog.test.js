@@ -33,3 +33,7 @@ test('renders url and likes when button clicked', async () => {
 	const div = container.querySelector('.urlAndLikes')
 	expect(div).not.toHaveStyle('display: none')
 })
+
+test('like button clicked correct no. of times', async () => {
+	const {container} = render(<Blog blog={blog} />)
+})

@@ -1,34 +1,8 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, blogs, setBlogs, username }) => {
+const Blog = ({ blog, makeHandleLikeButton, username }) => {
 	const [visible, setVisible] = useState(false)
-
-	const handleLikeButton = (event) => {
-		event.preventDefault()
-
-		const updatedBlog = {
-			user: blog.user.id,
-			likes: blog.likes + 1,
-			author: blog.author,
-			title: blog.title,
-			url: blog.url
-		}
-		let savedBlogs = [...blogs]
-		savedBlogs.find(blogSaved => blogSaved.id === blog.id).likes += 1
-		savedBlogs.sort((a, b) => {
-			if (a.likes > b.likes) {
-				return -1
-			} else if (b.likes > a.likes) {
-				return 1
-			} else {
-				return 0
-			}
-		})
-		setBlogs(savedBlogs)
-
-		blogService.update(blog.id, updatedBlog)
-	}
 
 	const handleRemoveButton = (event) => {
 		event.preventDefault()
@@ -63,7 +37,7 @@ const Blog = ({ blog, blogs, setBlogs, username }) => {
 				</div>
 				<div>
 					likes {blog.likes}
-					<button onClick={handleLikeButton}>like</button>
+					<button onClick={makeHandleLikeButton(blog)}>like</button>
 				</div>
 				<div>{blog.user.username}</div>
 				<div style={{ display: username === blog.user.username ? '' : 'none' }}>

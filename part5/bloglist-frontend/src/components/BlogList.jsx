@@ -2,7 +2,7 @@ import Blog from './Blog'
 
 const BlogList = ({
 	blogs,
-	setBlogs,
+	makeHandleLikeButton,
 	username
 }) => {
 	return (
@@ -11,8 +11,7 @@ const BlogList = ({
 				<Blog
 					key={blog.id}
 					blog={blog}
-					blogs={blogs}
-					setBlogs={setBlogs}
+					makeHandleLikeButton={makeHandleLikeButton}
 					username={username}
 				/>
 			)}
