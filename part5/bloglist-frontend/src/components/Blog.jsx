@@ -1,17 +1,13 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, makeHandleLikeButton, username }) => {
+const Blog = ({
+	blog,
+	makeHandleLikeButton,
+	makeHandleRemoveButton,
+	username
+}) => {
 	const [visible, setVisible] = useState(false)
-
-	const handleRemoveButton = (event) => {
-		event.preventDefault()
-
-		if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)){
-			setBlogs(blogs.filter(savedBlog => savedBlog.id !== blog.id))
-			blogService.remove(blog.id)
-		}
-	}
 
 	const blogStyle = {
 		paddingTop: 10,
@@ -41,7 +37,7 @@ const Blog = ({ blog, makeHandleLikeButton, username }) => {
 				</div>
 				<div>{blog.user.username}</div>
 				<div style={{ display: username === blog.user.username ? '' : 'none' }}>
-					<button onClick={handleRemoveButton}>remove</button>
+					<button onClick={makeHandleRemoveButton(blog)}>remove</button>
 				</div>
 			</div>
 		</div>

@@ -160,6 +160,16 @@ const App = () => {
 		setBlogs(savedBlogs)
 	}
 
+	const makeHandleRemoveButton = blog => event => {
+		event.preventDefault()
+
+		if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+			setBlogs(blogs.filter(savedBlog => savedBlog.id !== blog.id))
+			blogService.remove(blog.id)
+			displayNotification('success', `Removed blog ${blog.title} by ${blog.author}`)
+		}
+	}
+
 	return (
 		<div>
 			<h2>{!user ? 'log in to application' : 'blogs'}</h2>
@@ -195,6 +205,7 @@ const App = () => {
 						<BlogList
 							blogs={blogs}
 							makeHandleLikeButton={makeHandleLikeButton}
+							makeHandleRemoveButton={makeHandleRemoveButton}
 							username={user.username}
 						/>
 					</>

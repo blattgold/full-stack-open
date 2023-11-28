@@ -26,7 +26,7 @@ test('calls event handler with right details', async () => {
 	const { container } = render(
 		<NewBlogForm
 			handleCreateBlog={ mockHandlerWrapper }
-			handleTitleChange={({ target })=> title += target.value}
+			handleTitleChange={({ target }) => title += target.value}
 			handleAuthorChange={({ target }) => author += target.value}
 			handleUrlChange={({ target }) => url += target.value}
 			title={title}

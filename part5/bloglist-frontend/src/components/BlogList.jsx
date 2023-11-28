@@ -3,6 +3,7 @@ import Blog from './Blog'
 const BlogList = ({
 	blogs,
 	makeHandleLikeButton,
+	makeHandleRemoveButton,
 	username
 }) => {
 	return (
@@ -12,6 +13,7 @@ const BlogList = ({
 					key={blog.id}
 					blog={blog}
 					makeHandleLikeButton={makeHandleLikeButton}
+					makeHandleRemoveButton={makeHandleRemoveButton}
 					username={username}
 				/>
 			)}
