@@ -35,5 +35,17 @@ test('renders url and likes when button clicked', async () => {
 })
 
 test('like button clicked correct no. of times', async () => {
-	const {container} = render(<Blog blog={blog} makeHandleLikeButton={() => null}/>)
+	const mockHandler = jest.fn()
+	render(<Blog blog={blog} makeHandleLikeButton={mockHandler}/>)
+
+	const user = userEvent.setup()
+
+	const viewButton = screen.getByText('view')
+	const likeButton = screen.getByText('like')
+
+	await user.click(viewButton)
+	await user.click(likeButton)
+	await user.click(likeButton)
+
+	expect(mockHandler.mock.calls).toHaveLength(2)
 })
