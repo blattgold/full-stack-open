@@ -14,7 +14,7 @@ const blog = {
 }
 
 test('renders title and author but not url or likes', () => {
-	const {container} = render(<Blog blog={blog} />)
+	const {container} = render(<Blog blog={blog} makeHandleLikeButton={() => null}/>)
 
 	const div1 = container.querySelector('.titleAndAuthor')
 	expect(div1).toHaveTextContent('testTitle testAuthor')
@@ -24,7 +24,7 @@ test('renders title and author but not url or likes', () => {
 })
 
 test('renders url and likes when button clicked', async () => {
-	const {container} = render(<Blog blog={blog} />)
+	const {container} = render(<Blog blog={blog} makeHandleLikeButton={() => null}/>)
 
 	const user = userEvent.setup()
 	const button = screen.getByText('view')
@@ -35,5 +35,5 @@ test('renders url and likes when button clicked', async () => {
 })
 
 test('like button clicked correct no. of times', async () => {
-	const {container} = render(<Blog blog={blog} />)
+	const {container} = render(<Blog blog={blog} makeHandleLikeButton={() => null}/>)
 })
