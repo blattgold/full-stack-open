@@ -117,5 +117,80 @@ describe('Blog app', function() {
 				})
 			})
 		})
+
+		describe('blogs are ordered according to likes', function() {
+			beforeEach(function() {
+				cy.request({
+					url: 'http://localhost:3003/api/blogs',
+					method: 'POST',
+					body: {
+						title: 'testTitle1', 
+						author: 'testAuthor1',
+						url: 'testUrl1'
+					},
+					headers: {
+						'Authorization': `bearer ${JSON.parse(localStorage.getItem('loggedBlogappUser')).token}`
+					}
+				})
+				cy.request({
+					url: 'http://localhost:3003/api/blogs',
+					method: 'POST',
+					body: {
+						title: 'testTitle2', 
+						author: 'testAuthor2',
+						url: 'testUrl2'
+					},
+					headers: {
+						'Authorization': `bearer ${JSON.parse(localStorage.getItem('loggedBlogappUser')).token}`
+					}
+				})
+				cy.request({
+					url: 'http://localhost:3003/api/blogs',
+					method: 'POST',
+					body: {
+						title: 'testTitle3', 
+						author: 'testAuthor3',
+						url: 'testUrl3'
+					},
+					headers: {
+						'Authorization': `bearer ${JSON.parse(localStorage.getItem('loggedBlogappUser')).token}`
+					}
+				})
+				cy.visit('http://localhost:5173')
+			})
+
+			it('blogs are ordered according to likes', function() {
+				cy.get('.blog')
+					.eq(1)
+					.contains('view')
+					.click()
+				cy.get('.blog')
+					.eq(1)
+					.contains('like')
+					.click()
+					.click()
+
+				cy.get('.blog')
+					.eq(2)
+					.contains('view')
+					.click()
+				cy.get('.blog')
+					.eq(2)
+					.contains('like')
+					.click()
+
+				cy.get('.titleAndAuthor')
+					.eq(0)
+					.contains('testTitle2 testAuthor2')
+
+				cy.get('.titleAndAuthor')
+					.eq(1)
+					.contains('testTitle3 testAuthor3')
+
+				cy.get('.titleAndAuthor')
+					.eq(2)
+					.contains('testTitle1 testAuthor1')
+			})
+		})
 	})
 })
