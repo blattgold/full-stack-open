@@ -35,4 +35,45 @@ describe('Blog app', function() {
 			cy.contains('invalid username or password')
 		})
 	})
+
+	describe('When logged in', function() {
+		beforeEach(function() {
+			cy.request('POST', 'http://localhost:3003/api/users', {
+				username: 'testuser',
+				password: 'testpass'
+			})
+			cy.request('POST', 'http://localhost:3003/api/login', {
+				username: 'testuser',
+				password: 'testpass'
+			}).then(response => {
+				localStorage.setItem('loggedBlogappUser', JSON.stringify(response.body))
+				cy.visit('http://localhost:5173')
+			})
+		})
+
+		it('A blog can be created', function() {
+			cy.contains('create new blog').click()
+			cy.get('input[placeholder="title"]').type('testTitle')
+			cy.get('input[placeholder="author"]').type('testAuthor')
+			cy.get('input[placeholder="url"]').type('testUrl')
+			cy.get('#create-blog-button').click()
+
+			cy.contains('new blog testTitle by testAuthor added')
+			cy.contains('testTitle testAuthor')
+				.contains('view')
+		})
+
+		it.only('User can like a blog', function() {
+			cy.contains('create new blog').click()
+			cy.get('input[placeholder="title"]').type('testTitle')
+			cy.get('input[placeholder="author"]').type('testAuthor')
+			cy.get('input[placeholder="url"]').type('testUrl')
+			cy.get('#create-blog-button').click()
+
+			cy.contains('view').click()
+			cy.contains('likes 0')
+			cy.contains('like').click()
+			cy.contains('likes 1')
+		})
+	})
 })
