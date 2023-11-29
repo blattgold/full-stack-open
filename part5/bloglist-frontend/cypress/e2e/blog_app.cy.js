@@ -93,6 +93,29 @@ describe('Blog app', function() {
 				cy.contains('Removed blog testTitle by testAuthor')
 				cy.contains('testTitle testAuthor').should('not.exist')
 			})
+
+			describe('Ensure only user who created blog can see delete button', function() {
+				beforeEach(function() {
+					localStorage.removeItem('loggedBlogappUser')
+
+					cy.request('POST', 'http://localhost:3003/api/users', {
+						username: 'anotheruser',
+						password: 'anotherpass'
+					})
+					cy.request('POST', 'http://localhost:3003/api/login', {
+						username: 'anotheruser',
+						password: 'anotherpass'
+					}).then(response => {
+						localStorage.setItem('loggedBlogappUser', JSON.stringify(response.body))
+						cy.visit('http://localhost:5173')
+					})
+				})
+
+				it('Ensure only user who created blog can see delete button', function() {
+					cy.contains('view').click()
+					cy.contains('remove').parent().should('have.css', 'display', 'none')
+				})
+			})
 		})
 	})
 })
