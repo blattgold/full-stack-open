@@ -63,17 +63,36 @@ describe('Blog app', function() {
 				.contains('view')
 		})
 
-		it.only('User can like a blog', function() {
-			cy.contains('create new blog').click()
-			cy.get('input[placeholder="title"]').type('testTitle')
-			cy.get('input[placeholder="author"]').type('testAuthor')
-			cy.get('input[placeholder="url"]').type('testUrl')
-			cy.get('#create-blog-button').click()
+		describe('User can...', function() {
+			beforeEach(function() {
+				cy.request({
+					url: 'http://localhost:3003/api/blogs',
+					method: 'POST',
+					body: {
+						title: 'testTitle', 
+						author: 'testAuthor',
+						url: 'testUrl'
+					},
+					headers: {
+						'Authorization': `bearer ${JSON.parse(localStorage.getItem('loggedBlogappUser')).token}`
+					}
+				})
+				cy.visit('http://localhost:5173')
+			})
 
-			cy.contains('view').click()
-			cy.contains('likes 0')
-			cy.contains('like').click()
-			cy.contains('likes 1')
+			it('User can like a blog', function() {
+				cy.contains('view').click()
+				cy.contains('likes 0')
+				cy.contains('like').click()
+				cy.contains('likes 1')
+			})
+
+			it('User can delete a blog', function() {
+				cy.contains('view').click()
+				cy.contains('remove').click()
+				cy.contains('Removed blog testTitle by testAuthor')
+				cy.contains('testTitle testAuthor').should('not.exist')
+			})
 		})
 	})
 })
